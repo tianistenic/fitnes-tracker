@@ -1,0 +1,88 @@
+<!-- templates/nutrition.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Nutrition</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script>
+        $(document).ready(function () {
+            // Initialize date picker
+            $("#date").datepicker({
+                dateFormat: "yy-mm-dd",
+                onSelect: function (dateText) {
+                    // Update form action with the selected date
+                    $("form").attr("action", "{{ url_for('log_nutrition_api', date='') }}" + dateText);
+                }
+            });
+
+            // Handle form submission with AJAX
+            $("form").submit(function (event) {
+                event.preventDefault();
+
+                // Gather form data
+                var formData = {
+                    calories: $("#calories").val(),
+                    fats: $("#fats").val(),
+                    carbs: $("#carbs").val(),
+                    protein: $("#protein").val()
+                };
+
+                // Send AJAX POST request
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url_for('log_nutrition_api', date='') }}" + $("#date").val(),
+                    contentType: "application/json;charset=UTF-8",
+                    data: JSON.stringify(formData),
+                    success: function (response) {
+                        // Handle success
+                        alert(response.message);
+                        location.reload(); // Reload the page to update nutrition log
+                    },
+                    error: function (error) {
+                        // Handle errors
+                        alert("Error: " + JSON.parse(error.responseText).error);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Log Nutrition</h1>
+    <form method="post" action="{{ url_for('log_nutrition_api', date='') }}" id="nutritionForm">
+        <label for="date">Date:</label>
+        <input type="text" id="date" name="date" required>
+        <br>
+        <label for="calories">Calories:</label>
+        <input type="number" id="calories" name="calories" required>
+        <br>
+        <label for="fats">Fats:</label>
+        <input type="number" id="fats" name="fats" required>
+        <br>
+        <label for="carbs">Carbs:</label>
+        <input type="number" id="carbs" name="carbs" required>
+        <br>
+        <label for="protein">Protein:</label>
+        <input type="number" id="protein" name="protein" required>
+        <br>
+        <button type="submit">Log Nutrition</button>
+    </form>
+    <p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p>
+
+    {% if nutritions %}
+        <h2>Your Nutrition Log</h2>
+        <ul>
+            {% for nutrition in nutritions %}
+                <li>Calories: {{ nutrition.calories }}, Fats: {{ nutrition.fats }}, Carbs: {{ nutrition.carbs }}, Protein: {{ nutrition.protein }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No nutrition data logged yet.</p>
+    {% endif %}
+</body>
+</html>

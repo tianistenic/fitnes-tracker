@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+    <header>
+        <h1>Welcome to the Dashboard</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('dashboard') }}">Home</a></li>
+                <li><a href="{{ url_for('workout') }}">Workout Log</a></li>
+                <li><a href="{{ url_for('nutrition') }}">Nutrition Log</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div id="dashboard">
+        <section id="main-content">
+            <h2>Main Content</h2>
+            <p>This is a placeholder for your main dashboard content.</p>
+        </section>
+
+        <section id="workout-log">
+            <h2>Workout Log</h2>
+            <p>This is a placeholder for your workout log content.</p>
+            <!-- Add content or links related to the workout log -->
+        </section>
+
+        <section id="nutrition-log">
+            <h2>Nutrition Log</h2>
+            <p>This is a placeholder for your nutrition log content.</p>
+            <!-- Add content or links related to the nutrition log -->
+        </section>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</body>
+</html>
